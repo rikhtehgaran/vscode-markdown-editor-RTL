@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import * as NodePath from 'path'
 const KeyVditorOptions = 'vditor.options'
+import { TextEncoder } from 'util'
 
 function debug(...args: any[]) {
   console.log(...args)
@@ -59,14 +60,6 @@ class EditorPanel {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined
-    // if (EditorPanel.currentPanel && uri !== EditorPanel.currentPanel?._uri) {
-    //   EditorPanel.currentPanel.dispose()
-    // }
-    // // If we already have a panel, show it.
-    // if (EditorPanel.currentPanel) {
-    //   EditorPanel.currentPanel._panel.reveal(column)
-    //   return
-    // }
     if (!vscode.window.activeTextEditor && !uri) {
       showError(`Did not open markdown file!`)
       return
@@ -153,50 +146,23 @@ class EditorPanel {
     // Listen for when the panel is disposed
     // This happens when the user closes the panel or when the panel is closed programmatically
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables)
-    let textEditTimer: NodeJS.Timeout | void
-    // close EditorPanel when vsc editor is close
-    vscode.workspace.onDidCloseTextDocument((e) => {
-      if (e.fileName === this._fsPath) {
-        this.dispose()
+
+    // Add listener for file renames
+    vscode.workspace.onDidRenameFiles((e) => {
+      debug('onDidRenameFiles', e)
+      for (const file of e.files) {
+        if (file.oldUri.toString() === this._uri.toString()) {
+          this._handleFilePathChange(file.newUri)
+          break
+        }
       }
     }, this._disposables)
-    // update EditorPanel when vsc editor changes
-    vscode.workspace.onDidChangeTextDocument((e) => {
-      if (e.document.fileName !== this._document.fileName) {
-        return
-      }
-      // 当 webview panel 激活时不将由 webview编辑导致的 vsc 编辑器更新同步回 webview
-      // don't change webview panel when webview panel is focus
-      if (this._panel.active) {
-        return
-      }
-      textEditTimer && clearTimeout(textEditTimer)
-      textEditTimer = setTimeout(() => {
-        this._update()
-        this._updateEditTitle()
-      }, 300)
-    }, this._disposables)
-    // Handle messages from the webview
+
+
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
         debug('msg from webview review', message, this._panel.active)
 
-        const syncToEditor = async () => {
-          debug('sync to editor', this._document, this._uri)
-          if (this._document) {
-            const edit = new vscode.WorkspaceEdit()
-            edit.replace(
-              this._document.uri,
-              new vscode.Range(0, 0, this._document.lineCount, 0),
-              message.content
-            )
-            await vscode.workspace.applyEdit(edit)
-          } else if (this._uri) {
-            await vscode.workspace.fs.writeFile(this._uri, message.content)
-          } else {
-            showError(`Cannot find original file to save!`)
-          }
-        }
         switch (message.command) {
           case 'ready':
             this._update({
@@ -226,7 +192,7 @@ class EditorPanel {
           case 'edit': {
             // 只有当 webview 处于编辑状态时才同步到 vsc 编辑器，避免重复刷新
             if (this._panel.active) {
-              await syncToEditor()
+              this._isEdit = true
               this._updateEditTitle()
             }
             break
@@ -236,8 +202,8 @@ class EditorPanel {
             break
           }
           case 'save': {
-            await syncToEditor()
-            await this._document.save()
+            await vscode.workspace.fs.writeFile(this._uri, new TextEncoder().encode(message.content))
+            this._isEdit = false
             this._updateEditTitle()
             break
           }
@@ -322,6 +288,71 @@ class EditorPanel {
     }
   }
 
+  private async _handleFilePathChange(newUri: vscode.Uri) {
+    const oldUri = this._uri
+    debug('File path change detected:', oldUri.toString(), '->', newUri.toString())
+
+    // 额外的路径有效性检查
+    if (!newUri || !newUri.fsPath) {
+      showError(`Invalid new URI: ${newUri}`)
+      return
+    }
+
+    // 检查文件是否实际存在
+    try {
+      await vscode.workspace.fs.stat(newUri)
+    } catch (statError) {
+      showError(`New file does not exist: ${newUri.fsPath}`)
+      return
+    }
+
+    try {
+      // 尝试打开新文档
+      const newDocument = await vscode.workspace.openTextDocument(newUri)
+
+      // 验证文档是否为 Markdown
+      if (newDocument.languageId !== 'markdown') {
+        showError(`New file is not a Markdown document: ${newUri.fsPath}`)
+        return
+      }
+
+      // 更新 URI 和文档
+      this._uri = newUri
+      this._document = newDocument
+
+      // 更新面板内容和标题
+      // this._update()
+      this._updateEditTitle()
+
+      // 通知 Webview 文件已重命名
+      this._panel.webview.postMessage({
+        command: 'file-renamed',
+        oldUri: oldUri.toString(),
+        newUri: newUri.toString()
+      })
+
+      debug('File path change processed successfully:', {
+        oldPath: oldUri.fsPath,
+        newPath: newUri.fsPath,
+        newTitle: this._panel.title
+      })
+    } catch (error: any) {
+      // 更详细的错误处理
+      const errorMessage = `Failed to process file rename: ${error.message}`
+      console.error(errorMessage, error)
+      showError(errorMessage)
+
+      // 尝试恢复到原始状态，而不是直接销毁面板
+      this._uri = oldUri
+      try {
+        this._document = await vscode.workspace.openTextDocument(oldUri)
+      } catch (recoveryError) {
+        console.error('Failed to recover original document', recoveryError)
+        this.dispose() // 如果恢复失败，则销毁面板
+      }
+    }
+  }
+
   private _init() {
     const webview = this._panel.webview
 
@@ -330,13 +361,11 @@ class EditorPanel {
   }
   private _isEdit = false
   private _updateEditTitle() {
-    const isEdit = this._document.isDirty
-    if (isEdit !== this._isEdit) {
-      this._isEdit = isEdit
-      this._panel.title = `${isEdit ? `[edit]` : ''}${NodePath.basename(
-        this._fsPath
-      )}`
-    }
+    // const isEdit = this._document.isDirty
+    const newTitle = `${this._isEdit ? `[edit]` : ''}${NodePath.basename(this._fsPath)}`
+
+    // 强制更新标题，不仅仅依赖编辑状态的变化
+    this._panel.title = newTitle
   }
 
   // private fileToWebviewUri = (f: string) => {
