@@ -116,3 +116,5 @@ Same as above, but only for English/Latin text blocks.
 ## License
 
 MIT
+
+Made by Algo4Stock 🇮🇷

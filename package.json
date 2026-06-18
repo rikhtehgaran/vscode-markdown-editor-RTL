@@ -3,7 +3,7 @@
   "displayName": "Ag4s RTL Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG editor for RTL Markdown with Persian font support.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "Algo4Stock",
   "private": false,
   "engines": {
