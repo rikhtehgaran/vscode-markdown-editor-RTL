@@ -15,21 +15,33 @@ body[data-use-vscode-theme-color="1"] .vditor {
   --toolbar-background-color: var(--vscode-editor-background);
   --textarea-background-color: var(--vscode-editor-background);
 }
-/* fix font family */
+/* English font fallback; per-block fonts are applied by rtl.ts */
 .vditor .vditor-reset {
   font-family: var(--vscode-editor-font-family)!important;
 }
+
+/* Code blocks are always left-to-right */
+.vditor-wysiwyg__block[data-type="code-block"],
+.vditor-wysiwyg__block[data-type="code-block"] pre,
+.vditor-wysiwyg__block[data-type="code-block"] code {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
 /* fix code block color in dark mode */
 .vditor--dark .vditor-reset code:not(.hljs):not(.highlight-chroma) {
   background-color: rgba(66,133,244,.1);
 }
+
 /* fix outline toolbar padding */
 .vditor-toolbar.vditor-toolbar--pin {
   padding-left: 35px!important;
 }
+
 .vditor-ir pre.vditor-reset {
   position: relative;
 }
+
 .vditor-panel {
   transition: width 0.2s ease-in-out;
   max-width: none;
@@ -38,9 +50,11 @@ body[data-use-vscode-theme-color="1"] .vditor {
   transform: translate(0, 0);
   z-index: 1000002; /* 确保emoj选择框在tips上方 */
 }
+
 .vditor-panel::after {
   display: none;
 }
+
 .vditor-panel:hover,
 .vditor-panel_hover {
   opacity: 0.86;
@@ -56,16 +70,18 @@ body[data-use-vscode-theme-color="1"] .vditor {
 
 .vditor-reset {
   padding-left: 35px !important;
+  padding-right: 35px !important;
 }
+
 .jconfirm {
   color: black;
   font-size: 1.2em; /* 增加字体大小 */
   padding: 15px; /* 增加内边距 */
 }
+
 .jconfirm-buttons button {
   text-transform: none!important;
 }
-
 
 .vditor-panel:hover, .vditor-panel_hover {
   opacity: 1;

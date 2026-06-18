@@ -17,8 +17,11 @@ import 'vditor/dist/index.css'
 import { t, lang } from './lang'
 import { toolbar } from './toolbar'
 import { fixTableIr } from './fix-table-ir'
+import { createRtlController, RtlSettings } from './rtl'
 import './main.css'
 import './theme.css'
+
+let rtlController: ReturnType<typeof createRtlController> | null = null
 
 function initVditor(msg) {
   console.log('msg', msg)
@@ -62,6 +65,13 @@ function initVditor(msg) {
       handleToolbarClick()
       fixTableIr()
       fixPanelHover()
+      if (msg.rtlSettings) {
+        if (rtlController) {
+          rtlController.stop()
+        }
+        rtlController = createRtlController(msg.rtlSettings as RtlSettings)
+        rtlController.start()
+      }
     },
     preview: {
       theme: {
@@ -91,6 +101,7 @@ function initVditor(msg) {
       inputTimer && clearTimeout(inputTimer)
       inputTimer = setTimeout(() => {
         vscode.postMessage({ command: 'edit', content: vditor.getValue() })
+        rtlController?.processAll()
       }, 100)
     },
     upload: {
@@ -161,6 +172,15 @@ window.addEventListener('message', (e) => {
           }
         }
       })
+      break
+    }
+    case 'rtl-config': {
+      if (msg.rtlSettings && rtlController) {
+        rtlController.update(msg.rtlSettings as RtlSettings)
+      } else if (msg.rtlSettings) {
+        rtlController = createRtlController(msg.rtlSettings as RtlSettings)
+        rtlController.start()
+      }
       break
     }
     default:

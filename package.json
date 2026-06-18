@@ -1,11 +1,11 @@
 {
-  "name": "polar-markdown-editor",
-  "displayName": "Polar Markdown Editor(By Polar bear)",
+  "name": "rtl-markdown-editor",
+  "displayName": "Ag4s RTL Markdown Editor",
   "icon": "media/logo.png",
-  "description": "A full-featured WYSIWYG editor for markdown.",
-  "version": "0.1.26",
-  "publisher": "VincentZheng",
-  "private": true,
+  "description": "A full-featured WYSIWYG editor for RTL Markdown with Persian font support.",
+  "version": "0.0.5",
+  "publisher": "Algo4Stock",
+  "private": false,
   "engines": {
     "vscode": "^1.47.0"
   },
@@ -19,64 +19,109 @@
     "wysiwyg",
     "typora",
     "markdown-previewer",
-    "markdown-editor"
+    "markdown-editor",
+    "rtl",
+    "persian"
   ],
   "activationEvents": [
-    "onWebviewPanel:markdown-editor",
+    "onCommand:algo4stock.rtl-markdown-editor.openEditor",
+    "onCustomEditor:algo4stock.rtl-markdown-editor",
+    "onWebviewPanel:algo4stock.rtl-markdown-editor",
     "onLanguage:markdown"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vincent-zheng/vscode-markdown-editor.git"
+    "url": "https://github.com/rikhtehgaran/vscode-markdown-editor-RTL.git"
   },
   "main": "out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "markdown-editor.openEditor",
-        "title": "Open with markdown editor",
-        "category": "markdown-editor"
+        "command": "algo4stock.rtl-markdown-editor.openEditor",
+        "title": "Open with Ag4s RTL Markdown Editor",
+        "category": "algo4stock.rtl-markdown-editor"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "algo4stock.rtl-markdown-editor",
+        "displayName": "Ag4s RTL Markdown Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          }
+        ]
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "when": "resourceLangId == markdown",
-          "command": "markdown-editor.openEditor",
+          "command": "algo4stock.rtl-markdown-editor.openEditor",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
           "when": "resourceLangId == markdown",
-          "command": "markdown-editor.openEditor",
+          "command": "algo4stock.rtl-markdown-editor.openEditor",
           "group": "1_open"
         }
       ]
     },
     "configuration": {
-      "title": "markdown-editor",
+      "title": "Ag4s RTL Markdown Editor",
       "properties": {
-        "markdown-editor.imageSaveFolder": {
+        "algo4stock.rtl-markdown-editor.imageSaveFolder": {
           "type": "string",
           "default": "assets",
           "description": "Save images to which folder when upload in markdown, default relative to the markdown file, you can set to project root via `${projectRoot}/assets`."
         },
-        "markdown-editor.useVscodeThemeColor": {
+        "algo4stock.rtl-markdown-editor.useVscodeThemeColor": {
           "type": "boolean",
           "default": true,
           "description": "Use vscode theme's background color as the markdown editor's background color."
         },
-        "markdown-editor.customCss": {
+        "algo4stock.rtl-markdown-editor.customCss": {
           "type": "string",
-          "default": ""
+          "default": "",
+          "description": "Custom CSS rules injected into the markdown editor webview."
+        },
+        "algo4stock.rtl-markdown-editor.enableRtl": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic right-to-left layout for lines containing Persian or Arabic text. English lines stay left-to-right. Code blocks are always left-to-right."
+        },
+        "algo4stock.rtl-markdown-editor.persianFont": {
+          "type": "string",
+          "default": "Vazirmatn",
+          "description": "Font family for Persian/Arabic text. Default is the bundled Vazirmatn font. Set any installed system font name to use a local font instead."
+        },
+        "algo4stock.rtl-markdown-editor.englishFont": {
+          "type": "string",
+          "default": "",
+          "description": "Font family for English/Latin text. Leave empty to use the VS Code editor font."
+        },
+        "algo4stock.rtl-markdown-editor.persianFontSizePercent": {
+          "type": "number",
+          "default": 100,
+          "minimum": 50,
+          "maximum": 300,
+          "description": "Scale Persian/Arabic text size relative to the default editor size. 100 keeps the current size; lower values shrink and higher values enlarge."
+        },
+        "algo4stock.rtl-markdown-editor.englishFontSizePercent": {
+          "type": "number",
+          "default": 100,
+          "minimum": 50,
+          "maximum": 300,
+          "description": "Scale English/Latin text size relative to the default editor size. 100 keeps the current size; lower values shrink and higher values enlarge."
         }
       }
     },
     "keybindings": [
       {
         "key": "ctrl+shift+alt+m",
-        "command": "markdown-editor.openEditor",
+        "command": "algo4stock.rtl-markdown-editor.openEditor",
         "mac": "cmd+shift+alt+m",
         "when": "editorTextFocus && editorLangId == markdown"
       }

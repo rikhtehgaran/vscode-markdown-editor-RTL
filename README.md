@@ -1,4 +1,14 @@
-# Markdown Editor — A full-featured WYSIWYG editor for markdown
+# Ag4s RTL Markdown Editor
+
+A full-featured WYSIWYG editor for RTL Markdown with Persian font support.
+
+## Install
+
+[Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Algo4Stock.rtl-markdown-editor)
+
+Or install the latest `.vsix` file directly:
+- Download from [Releases](https://github.com/rikhtehgaran/vscode-markdown-editor-RTL/releases)
+- `code --install-extension rtl-markdown-editor-0.0.5.vsix`
 
 ## Demo
 
@@ -7,24 +17,23 @@
 ## Features
 
 - What You See Is What You Get (WYSIWYG)
-- Auto sync changes between the VSCode editor and webview
+- Auto sync changes between the VS Code editor and webview
+- **Automatic RTL/LTR**: Persian/Arabic lines are right-aligned; English lines stay left-to-right
+- **Separate fonts**: Bundled Vazirmatn for Persian text; VS Code editor font for English (both configurable)
+- **Independent font scaling**: Adjust Persian and English text size separately as a percentage of the default
+- Code blocks are always left-to-right
 - Copy markdown/html
 - Uploaded/pasted/drag-dropped images will be auto-saved to the `assets` folder
 - Multi-theme support
 - Shortcut keys
-- Multiple editting modes: instant Rendering mode (**Recommand!**) / WYSIWYG mode / split screen mode
+- Multiple editing modes: instant Rendering mode / WYSIWYG mode / split screen mode
 - Markdown extensions
 - Multiple graph support including KaTeX / Mermaid / Graphviz / ECharts / abc.js(notation) / ...
-- For more usage please see [vditor](https://github.com/Vanessa219/vditor)
-- Add support for plumtuml
+- UI language is English
 
 ## Install
 
-[https://marketplace.visualstudio.com/items?itemName=VincentZheng.polar-markdown-editor](https://marketplace.visualstudio.com/items?itemName=VincentZheng.polar-markdown-editor)
-
-## Supported syntax
-
-[demo article](https://ld246.com/guide/markdown)
+Install from a packaged `.vsix` file or build locally with `yarn pack`.
 
 ## Usage
 
@@ -32,7 +41,7 @@
 
 - open a markdown file
 - type `cmd-shift-p` to enter command mode
-- type `markdown-editor: Open with markdown editor`
+- type `algo4stock.rtl-markdown-editor: Open with Ag4s RTL Markdown Editor`
 
 ### 2. Key bindings
 
@@ -42,21 +51,61 @@
 ### 3. Explorer Context menu
 
 - right click on markdown file
-- then click `Open with markdown editor`
+- then click `Open with Ag4s RTL Markdown Editor`
 
 ### 4. Editor title context menu
 
 - right click on a opened markdown file's tab title
-- then click `Open with markdown editor`
+- then click `Open with Ag4s RTL Markdown Editor`
 
-### Custom CSS (custom layout and vditor personalization)
+## Settings
 
-Edit your settings.json and add
+Add these to your VS Code `settings.json`:
 
+### Enable RTL (default: `true`)
+
+When enabled, any normal text block (headings, paragraphs, lists — not code blocks) that contains Persian or Arabic characters gets `direction: rtl` and `text-align: right`. English-only blocks stay left-to-right.
+
+```json
+"algo4stock.rtl-markdown-editor.enableRtl": true
 ```
-"markdown-editor.customCss": "my custom css rules"
 
-// Eg: "markdown-editor.customCss": ".vditor-ir pre.vditor-reset {line-height: 32px;padding-right: calc(100% - 800px) !important; margin-left: 100px;    font-family: system-ui !important;}"
+### Persian font (default: `Vazirmatn`)
+
+Uses the bundled Vazirmatn font by default. Set any installed system font name to override.
+
+```json
+"algo4stock.rtl-markdown-editor.persianFont": "Vazirmatn"
+```
+
+### English font (default: empty)
+
+Leave empty to use the VS Code editor font. Set a font name to override.
+
+```json
+"algo4stock.rtl-markdown-editor.englishFont": ""
+```
+
+### Persian font size percent (default: `100`)
+
+Scales Persian/Arabic text relative to the editor's default size. `100` is unchanged; `80` is smaller; `120` is larger.
+
+```json
+"algo4stock.rtl-markdown-editor.persianFontSizePercent": 100
+```
+
+### English font size percent (default: `100`)
+
+Same as above, but only for English/Latin text blocks.
+
+```json
+"algo4stock.rtl-markdown-editor.englishFontSizePercent": 100
+```
+
+### Custom CSS
+
+```json
+"algo4stock.rtl-markdown-editor.customCss": "my custom css rules"
 ```
 
 ## Acknowledgement
@@ -64,16 +113,6 @@ Edit your settings.json and add
 - [vscode](https://github.com/microsoft/vscode)
 - [vditor](https://github.com/Vanessa219/vditor)
 
-## Todo
-
-- [ ] Using [Custom Text Editor](https://code.visualstudio.com/api/extension-guides/custom-editors#custom-text-editor) ([demo](https://github.com/gera2ld/markmap-vscode))
-
 ## License
 
 MIT
-
-## Support
-
-If you like this extension make sure to star the repo. I am always looking for new ideas and feedback. In addition, it is possible to donate via crypto.
-
-![](./op_donate.png)

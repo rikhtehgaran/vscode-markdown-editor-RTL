@@ -4,7 +4,7 @@
   "private": "true",
   "scripts": {
     "start": "pnpm esbuild ./src/main.ts --bundle --watch --sourcemap --outfile=../media/dist/main.js",
-    "build": "rm -rf ../media/dist; pnpm esbuild ./src/main.ts --bundle --minify --sourcemap --outfile=../media/dist/main.js"
+    "build": "rm -rf ../media/dist && mkdir -p ../media/dist/fonts && cp src/fonts/*.woff2 ../media/dist/fonts/ && cp src/main.css src/theme.css src/fonts.css ../media/dist/ && npx esbuild ./src/main.ts --bundle --minify --sourcemap --outfile=../media/dist/main.js"
   },
   "browserslist": "> 0%",
   "devDependencies": {

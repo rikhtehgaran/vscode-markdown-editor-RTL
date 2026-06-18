@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import * as NodePath from 'path'
+const EXTENSION_ID = 'algo4stock.rtl-markdown-editor'
 const KeyVditorOptions = 'vditor.options'
 import { TextEncoder } from 'util'
 
@@ -7,17 +8,42 @@ function debug(...args: any[]) {
   console.log(...args)
 }
 
+function getRtlSettings() {
+  const config = vscode.workspace.getConfiguration(EXTENSION_ID)
+  return {
+    enableRtl: config.get<boolean>('enableRtl', true),
+    persianFont: config.get<string>('persianFont', 'Vazirmatn'),
+    englishFont: config.get<string>('englishFont', ''),
+    persianFontSizePercent: config.get<number>('persianFontSizePercent', 100),
+    englishFontSizePercent: config.get<number>('englishFontSizePercent', 100),
+  }
+}
+
 function showError(msg: string) {
-  vscode.window.showErrorMessage(`[markdown-editor] ${msg}`)
+  vscode.window.showErrorMessage(`[${EXTENSION_ID}] ${msg}`)
 }
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'markdown-editor.openEditor',
+      `${EXTENSION_ID}.openEditor`,
       (uri?: vscode.Uri, ...args) => {
         debug('command', uri, args)
         EditorPanel.createOrShow(context, uri)
+      }
+    )
+  )
+
+  context.subscriptions.push(
+    vscode.window.registerCustomEditorProvider(
+      EXTENSION_ID,
+      {
+        async resolveCustomTextEditor(document, webviewPanel) {
+          await EditorPanel.createCustomEditor(context, webviewPanel, document)
+        },
+      },
+      {
+        supportsMultipleEditorsPerDocument: false,
       }
     )
   )
@@ -37,6 +63,15 @@ export function activate(context: vscode.ExtensionContext) {
   // context.subscriptions.push(disposable);
 
   context.globalState.setKeysForSync([KeyVditorOptions])
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (!e.affectsConfiguration(EXTENSION_ID)) {
+        return
+      }
+      EditorPanel.activeInstance?.updateRtlSettings()
+    })
+  )
 }
 
 /**
@@ -47,8 +82,9 @@ class EditorPanel {
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
   public currentPanel: EditorPanel | undefined
+  public static activeInstance: EditorPanel | undefined
 
-  public static readonly viewType = 'markdown-editor'
+  public static readonly viewType = EXTENSION_ID
 
   private _disposables: vscode.Disposable[] = []
 
@@ -88,7 +124,7 @@ class EditorPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       EditorPanel.viewType,
-      'markdown-editor',
+      EXTENSION_ID,
       vscode.ViewColumn.One, // 强制在新panel中激活
       EditorPanel.getWebviewOptions(uri)
     )
@@ -101,7 +137,26 @@ class EditorPanel {
       uri
     )
     currentPanel.currentPanel = currentPanel
+    EditorPanel.activeInstance = currentPanel
     panel.reveal(vscode.ViewColumn.One) // 确保新panel获得焦点
+  }
+
+  public static async createCustomEditor(
+    context: vscode.ExtensionContext,
+    panel: vscode.WebviewPanel,
+    document: vscode.TextDocument
+  ) {
+    const { extensionUri } = context
+    const currentPanel = new EditorPanel(
+      context,
+      panel,
+      extensionUri,
+      document,
+      document.uri
+    )
+    currentPanel.currentPanel = currentPanel
+    EditorPanel.activeInstance = currentPanel
+    panel.reveal(vscode.ViewColumn.One)
   }
 
   private static getFolders(): vscode.Uri[] {
@@ -129,7 +184,7 @@ class EditorPanel {
   }
 
   static get config() {
-    return vscode.workspace.getConfiguration('markdown-editor')
+    return vscode.workspace.getConfiguration(EXTENSION_ID)
   }
 
   private constructor(
@@ -173,6 +228,7 @@ class EditorPanel {
                 ),
                 ...this._context.globalState.get(KeyVditorOptions),
               },
+              rtlSettings: getRtlSettings(),
               theme:
                 vscode.window.activeColorTheme.kind ===
                   vscode.ColorThemeKind.Dark
@@ -276,6 +332,9 @@ class EditorPanel {
 
   public dispose() {
     this.currentPanel = undefined
+    if (EditorPanel.activeInstance === this) {
+      EditorPanel.activeInstance = undefined
+    }
 
     // Clean up our resources
     this._panel.dispose()
@@ -376,6 +435,7 @@ class EditorPanel {
     props: {
       type?: 'init' | 'update'
       options?: any
+      rtlSettings?: ReturnType<typeof getRtlSettings>
       theme?: 'dark' | 'light'
     } = { options: void 0 }
   ) {
@@ -399,7 +459,7 @@ class EditorPanel {
       ) + '/'
     const toMediaPath = (f: string) => `media/dist/${f}`
     const JsFiles = ['main.js'].map(toMediaPath).map(toUri)
-    const CssFiles = ['main.css'].map(toMediaPath).map(toUri)
+    const CssFiles = ['main.css', 'fonts.css'].map(toMediaPath).map(toUri)
 
     return (
       `<!DOCTYPE html>
@@ -426,5 +486,12 @@ class EditorPanel {
 			</body>
 			</html>`
     )
+  }
+
+  public updateRtlSettings() {
+    this._panel.webview.postMessage({
+      command: 'rtl-config',
+      rtlSettings: getRtlSettings(),
+    })
   }
 }
