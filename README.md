@@ -12,7 +12,7 @@ Or install the latest `.vsix` file directly:
 
 ## Demo
 
-![demo](./demo.gif)
+![demo](./demo-v2.gif)
 
 ## Features
 
