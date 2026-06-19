@@ -109,12 +109,16 @@ Same as above, but only for English/Latin text blocks.
 "algo4stock.rtl-markdown-editor.customCss": "my custom css rules"
 ```
 
-### Custom Emojis (default: `["😄", "👎", "👍", "😕", "👀", "❤️", "🚀", "🎉"]`)
+### Custom Emojis (default: 31 emojis)
 
-Customize the emoji list available in the editor toolbar. Add your favorite emojis to personalize your editing experience.
+Customize the emoji list available in the editor toolbar. The default includes useful emojis for documentation and development:
+
+**Default emojis:** ℹ️ 📝 📋 📄 📁 🔗 📎 💡 📌 👀 ❓ ⚠️ 🧩 📦 ⚡ 🚀 🛠️ ✅ ❌ 🔥 ✨ 🆕 ➡️ ⬅️ 🔽 🔼 🎯 🏁 📊 🗣️ 🔍
+
+You can customize this list by adding your favorite emojis:
 
 ```json
-"algo4stock.rtl-markdown-editor.customEmojis": ["😀", "😊", "🎉", "❤️", "👍", "👎", "🔥", "⭐"]
+"algo4stock.rtl-markdown-editor.customEmojis": ["😀", "😊", "🎉", "❤️", "👍", "👎"]
 ```
 
 **Note**: Changes to emoji settings require reopening the markdown editor to take effect.

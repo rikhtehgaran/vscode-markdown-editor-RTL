@@ -60,7 +60,7 @@ function initVditor(msg) {
     toolbar,
     toolbarConfig: { pin: true },
     emoji: {
-      emojis: msg.rtlSettings?.customEmojis || ['😄', '👎', '👍', '😕', '👀', '❤️', '🚀', '🎉'],
+      emojis: msg.rtlSettings?.customEmojis || ['ℹ️', '📝', '📋', '📄', '📁', '🔗', '📎', '💡', '📌', '👀', '❓', '⚠️', '🧩', '📦', '⚡', '🚀', '🛠️', '✅', '❌', '🔥', '✨', '🆕', '➡️', '⬅️', '🔽', '🔼', '🎯', '🏁', '📊', '🗣️', '🔍'],
     },
     ...defaultOptions,
     after() {

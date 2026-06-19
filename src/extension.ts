@@ -16,7 +16,7 @@ function getRtlSettings() {
     englishFont: config.get<string>('englishFont', ''),
     persianFontSizePercent: config.get<number>('persianFontSizePercent', 100),
     englishFontSizePercent: config.get<number>('englishFontSizePercent', 100),
-    customEmojis: config.get<string[]>('customEmojis', ['😄', '👎', '👍', '😕', '👀', '❤️', '🚀', '🎉']),
+    customEmojis: config.get<string[]>('customEmojis', ['ℹ️', '📝', '📋', '📄', '📁', '🔗', '📎', '💡', '📌', '👀', '❓', '⚠️', '🧩', '📦', '⚡', '🚀', '🛠️', '✅', '❌', '🔥', '✨', '🆕', '➡️', '⬅️', '🔽', '🔼', '🎯', '🏁', '📊', '🗣️', '🔍']),
   }
 }
 
