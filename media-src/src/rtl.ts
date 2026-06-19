@@ -4,6 +4,7 @@ export interface RtlSettings {
   englishFont: string
   persianFontSizePercent: number
   englishFontSizePercent: number
+  customEmojis?: string[]
 }
 
 const PERSIAN_REGEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/

@@ -59,6 +59,9 @@ function initVditor(msg) {
     cache: { enable: false },
     toolbar,
     toolbarConfig: { pin: true },
+    emoji: {
+      emojis: msg.rtlSettings?.customEmojis || ['😄', '👎', '👍', '😕', '👀', '❤️', '🚀', '🎉'],
+    },
     ...defaultOptions,
     after() {
       // fixDarkTheme()

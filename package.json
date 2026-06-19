@@ -3,7 +3,7 @@
   "displayName": "Ag4s RTL Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG editor for RTL Markdown with Persian font support.",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "publisher": "Algo4Stock",
   "private": false,
   "engines": {
@@ -115,6 +115,14 @@
           "minimum": 50,
           "maximum": 300,
           "description": "Scale English/Latin text size relative to the default editor size. 100 keeps the current size; lower values shrink and higher values enlarge."
+        },
+        "algo4stock.rtl-markdown-editor.customEmojis": {
+          "type": "array",
+          "default": ["😄", "👎", "👍", "😕", "👀", "❤️", "🚀", "🎉"],
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom emoji list for the markdown editor. Each item should be an emoji character. Changes require reopening the editor."
         }
       }
     },

@@ -21,6 +21,7 @@ Or install the latest `.vsix` file directly:
 - **Automatic RTL/LTR**: Persian/Arabic lines are right-aligned; English lines stay left-to-right
 - **Separate fonts**: Bundled Vazirmatn for Persian text; VS Code editor font for English (both configurable)
 - **Independent font scaling**: Adjust Persian and English text size separately as a percentage of the default
+- **Custom emojis**: Personalize your emoji toolbar with your favorite emojis
 - Code blocks are always left-to-right
 - Copy markdown/html
 - Uploaded/pasted/drag-dropped images will be auto-saved to the `assets` folder
@@ -107,6 +108,16 @@ Same as above, but only for English/Latin text blocks.
 ```json
 "algo4stock.rtl-markdown-editor.customCss": "my custom css rules"
 ```
+
+### Custom Emojis (default: `["😄", "👎", "👍", "😕", "👀", "❤️", "🚀", "🎉"]`)
+
+Customize the emoji list available in the editor toolbar. Add your favorite emojis to personalize your editing experience.
+
+```json
+"algo4stock.rtl-markdown-editor.customEmojis": ["😀", "😊", "🎉", "❤️", "👍", "👎", "🔥", "⭐"]
+```
+
+**Note**: Changes to emoji settings require reopening the markdown editor to take effect.
 
 ## Acknowledgement
 
