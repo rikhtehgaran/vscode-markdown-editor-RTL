@@ -7,6 +7,7 @@ A full-featured WYSIWYG editor for RTL Markdown with Persian font support.
 [Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Algo4Stock.rtl-markdown-editor)
 
 Or install the latest `.vsix` file directly:
+
 - Download from [Releases](https://github.com/rikhtehgaran/vscode-markdown-editor-RTL/releases)
 - `code --install-extension rtl-markdown-editor-0.0.5.vsix`
 
@@ -21,7 +22,7 @@ Or install the latest `.vsix` file directly:
 - **Automatic RTL/LTR**: Persian/Arabic lines are right-aligned; English lines stay left-to-right
 - **Separate fonts**: Bundled Vazirmatn for Persian text; VS Code editor font for English (both configurable)
 - **Independent font scaling**: Adjust Persian and English text size separately as a percentage of the default
-- **Custom emojis**: Personalize your emoji toolbar with your favorite emojis
+- **Built-in emoji toolbar**: 39 emojis ready to use (8 default + 31 custom)
 - Code blocks are always left-to-right
 - Copy markdown/html
 - Uploaded/pasted/drag-dropped images will be auto-saved to the `assets` folder
@@ -109,19 +110,25 @@ Same as above, but only for English/Latin text blocks.
 "algo4stock.rtl-markdown-editor.customCss": "my custom css rules"
 ```
 
-### Custom Emojis (default: 31 emojis)
+### Auto Save (default: `true`)
 
-Customize the emoji list available in the editor toolbar. The default includes useful emojis for documentation and development:
-
-**Default emojis:** ℹ️ 📝 📋 📄 📁 🔗 📎 💡 📌 👀 ❓ ⚠️ 🧩 📦 ⚡ 🚀 🛠️ ✅ ❌ 🔥 ✨ 🆕 ➡️ ⬅️ 🔽 🔼 🎯 🏁 📊 🗣️ 🔍
-
-You can customize this list by adding your favorite emojis:
+Automatically save changes to the file when editing. When disabled, you will be prompted to save before closing unsaved files.
 
 ```json
-"algo4stock.rtl-markdown-editor.customEmojis": ["😀", "😊", "🎉", "❤️", "👍", "👎"]
+"algo4stock.rtl-markdown-editor.autoSave": true
 ```
 
-**Note**: Changes to emoji settings require reopening the markdown editor to take effect.
+**Note**: When auto-save is disabled and you try to close a file with unsaved changes, a dialog will appear asking if you want to save, discard, or cancel.
+
+## Emoji Toolbar
+
+The editor includes a comprehensive emoji toolbar with **39 emojis** (8 default Vditor emojis + 31 custom emojis):
+
+**Default Vditor emojis:** 👍 👎 😕 👀️ ❤️ ️  🎉️
+
+**Custom emojis:** ️ 📝 📋 📄 📁 🔗 📎 💡  👀 ❓ ⚠️ 🧩 📦 ⚡ 🚀 🛠️ ✅ ❌ 🔥 ✨ 🆕 ➡️ ️ 🔽 🔼 🎯 🏁 📊 🗣️ 🔍
+
+These emojis are built-in and ready to use immediately. No configuration needed!
 
 ## Acknowledgement
 

@@ -38,7 +38,12 @@ function initVditor(msg) {
       }
     })
   }
-  defaultOptions = merge(defaultOptions, msg.options, {
+  
+  // Remove any existing emoji configuration from msg.options to prevent conflicts
+  const cleanOptions = { ...msg.options };
+  delete cleanOptions.emoji;
+  
+  defaultOptions = merge(defaultOptions, cleanOptions, {
     preview: {
       math: {
         inlineDigit: true,
@@ -58,11 +63,107 @@ function initVditor(msg) {
     mode: 'wysiwyg',
     cache: { enable: false },
     toolbar,
-    toolbarConfig: { pin: true },
-    emoji: {
-      emojis: msg.rtlSettings?.customEmojis || ['ℹ️', '📝', '📋', '📄', '📁', '🔗', '📎', '💡', '📌', '👀', '❓', '⚠️', '🧩', '📦', '⚡', '🚀', '🛠️', '✅', '❌', '🔥', '✨', '🆕', '➡️', '⬅️', '🔽', '🔼', '🎯', '🏁', '📊', '🗣️', '🔍'],
+    toolbarConfig: { 
+      pin: true,
+      // Explicitly define emoji configuration in toolbar config
+      hint: false // Disable default hint to avoid conflicts
     },
     ...defaultOptions,
+    // Ensure emoji configuration is properly set
+    emoji: {
+      // Full custom emoji map
+      emojis: {
+        // 8 default Vditor emojis
+        '+1': '👍',
+        '-1': '👎',
+        'confused': '😕',
+        'eyes': '👀',
+        'heart': '❤️',
+        'rocket': '🚀',
+        'smile': '😊',
+        'tada': '🎉',
+        // 31 custom emojis
+        'info': 'ℹ️',
+        'note': '📝',
+        'list': '📋',
+        'file': '📄',
+        'folder': '📁',
+        'link': '🔗',
+        'attach': '📎',
+        'idea': '💡',
+        'pin': '📌',
+        'watch': '👁️',
+        'question': '❓',
+        'warning': '⚠️',
+        'puzzle': '🧩',
+        'package': '📦',
+        'zap': '⚡',
+        'rocket2': '🚀',
+        'tools': '🛠️',
+        'check': '✅',
+        'cross': '❌',
+        'fire': '🔥',
+        'sparkles': '✨',
+        'new': '🆕',
+        'right': '➡️',
+        'left': '⬅️',
+        'down': '🔽',
+        'up': '🔼',
+        'target': '🎯',
+        'finish': '🏁',
+        'chart': '📊',
+        'speak': '💬',
+        'search': '🔍'
+      },
+      // Ensure no default emoji icons are loaded
+      pathname: '',
+    },
+    // Configure hint to use our custom emojis
+    hint: {
+      emoji: {
+        // Override the default hint emoji list with our custom list
+        '+1': '👍',
+        '-1': '👎',
+        'confused': '😕',
+        'eyes': '👀',
+        'heart': '❤️',
+        'rocket': '🚀',
+        'smile': '😊',
+        'tada': '🎉',
+        // Include all custom emojis in hint as well
+        'info': 'ℹ️',
+        'note': '📝',
+        'list': '📋',
+        'file': '📄',
+        'folder': '📁',
+        'link': '🔗',
+        'attach': '📎',
+        'idea': '💡',
+        'pin': '📌',
+        'watch': '👁️',
+        'question': '❓',
+        'warning': '⚠️',
+        'puzzle': '🧩',
+        'package': '📦',
+        'zap': '⚡',
+        'rocket2': '🚀',
+        'tools': '🛠️',
+        'check': '✅',
+        'cross': '❌',
+        'fire': '🔥',
+        'sparkles': '✨',
+        'new': '🆕',
+        'right': '➡️',
+        'left': '⬅️',
+        'down': '🔽',
+        'up': '🔼',
+        'target': '🎯',
+        'finish': '🏁',
+        'chart': '📊',
+        'speak': '💬',
+        'search': '🔍'
+      }
+    },
     after() {
       // fixDarkTheme()
       handleToolbarClick()
@@ -156,6 +257,14 @@ window.addEventListener('message', (e) => {
         vditor.setValue(msg.content)
         console.log('setValue')
       }
+      break
+    }
+    case 'request-current-content': {
+      // Send current content back to VS Code for saving before close
+      vscode.postMessage({ 
+        command: 'current-content', 
+        content: vditor.getValue() 
+      })
       break
     }
     case 'uploaded': {

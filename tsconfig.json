@@ -3,12 +3,12 @@
 		"module": "commonjs",
 		"target": "es2019",
 		"lib": ["ES2019"],
-		"outDir": "out",
+		"outDir": "dist",
 		"sourceMap": true,
 		"strict": true,
 		"rootDir": "src",
 		"resolveJsonModule": true,
 		"esModuleInterop": true
 	},
-	"exclude": ["node_modules", ".vscode-test.js", "media-src", "Foyfile.ts"]
+	"exclude": ["node_modules", ".vscode-test.js", "media-src", "Foyfile.ts", "media", "dist", "webpack.config.js"]
 }

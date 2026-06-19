@@ -16,7 +16,6 @@ function getRtlSettings() {
     englishFont: config.get<string>('englishFont', ''),
     persianFontSizePercent: config.get<number>('persianFontSizePercent', 100),
     englishFontSizePercent: config.get<number>('englishFontSizePercent', 100),
-    customEmojis: config.get<string[]>('customEmojis', ['ℹ️', '📝', '📋', '📄', '📁', '🔗', '📎', '💡', '📌', '👀', '❓', '⚠️', '🧩', '📦', '⚡', '🚀', '🛠️', '✅', '❌', '🔥', '✨', '🆕', '➡️', '⬅️', '🔽', '🔼', '🎯', '🏁', '📊', '🗣️', '🔍']),
   }
 }
 
@@ -246,11 +245,30 @@ class EditorPanel {
           case 'error':
             showError(message.content)
             break
+          case 'get-content': {
+            // When user wants to save before closing, send current content back
+            if (this._isDirty) {
+              this._panel.webview.postMessage({ command: 'request-current-content' })
+            }
+            break
+          }
+          case 'current-content': {
+            // Received current content from webview, save it
+            await this._saveContent(message.content)
+            this._doDispose()
+            break
+          }
           case 'edit': {
             // 只有当 webview 处于编辑状态时才同步到 vsc 编辑器，避免重复刷新
             if (this._panel.active) {
               this._isEdit = true
+              this._isDirty = true // Mark as dirty when content changes
               this._updateEditTitle()
+              
+              // Auto-save if enabled
+              if (this._autoSave) {
+                this._saveContent(message.content)
+              }
             }
             break
           }
@@ -259,9 +277,7 @@ class EditorPanel {
             break
           }
           case 'save': {
-            await vscode.workspace.fs.writeFile(this._uri, new TextEncoder().encode(message.content))
-            this._isEdit = false
-            this._updateEditTitle()
+            await this._saveContent(message.content)
             break
           }
           case 'upload': {
@@ -331,7 +347,51 @@ class EditorPanel {
     return assetsFolder
   }
 
+  private async _saveContent(content: string) {
+    try {
+      await vscode.workspace.fs.writeFile(this._uri, new TextEncoder().encode(content))
+      this._isEdit = false
+      this._isDirty = false
+      this._updateEditTitle()
+      
+      // Show success message only if manually saved (not auto-saved)
+      if (!this._autoSave) {
+        vscode.window.showInformationMessage('File saved successfully')
+      }
+    } catch (error) {
+      showError(`Failed to save file: ${error.message}`)
+    }
+  }
+
   public dispose() {
+    // Check if we need to prompt for save before closing
+    if (this._isDirty && !this._autoSave) {
+      const choice = vscode.window.showWarningMessage(
+        'You have unsaved changes. Do you want to save before closing?',
+        { modal: true },
+        'Save',
+        "Don't Save",
+        'Cancel'
+      ).then(async (result) => {
+        if (result === 'Save') {
+          // Get current content from webview and save
+          this._panel.webview.postMessage({ command: 'get-content' })
+          // Wait a bit for the response, then save and dispose
+          setTimeout(() => {
+            this._doDispose()
+          }, 500)
+        } else if (result === "Don't Save") {
+          this._doDispose()
+        }
+        // If Cancel, do nothing
+      })
+      return
+    }
+    
+    this._doDispose()
+  }
+
+  private _doDispose() {
     this.currentPanel = undefined
     if (EditorPanel.activeInstance === this) {
       EditorPanel.activeInstance = undefined
@@ -420,6 +480,12 @@ class EditorPanel {
     this._panel.title = NodePath.basename(this._fsPath)
   }
   private _isEdit = false
+  private _isDirty = false // Track if file has unsaved changes
+  
+  private get _autoSave(): boolean {
+    return EditorPanel.config.get<boolean>('autoSave', true)
+  }
+  
   private _updateEditTitle() {
     // const isEdit = this._document.isDirty
     const newTitle = `${this._isEdit ? `[edit]` : ''}${NodePath.basename(this._fsPath)}`

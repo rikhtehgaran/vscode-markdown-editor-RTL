@@ -57,7 +57,25 @@ typings/
 # dotenv environment variables file
 .env
 
+# Source code directories - should be excluded from final package
 lib
+src/
+media-src/
 *.vsix
-out
+out/
+dist/
+
+# Media directory - keep compiled assets but ignore sources and temporary files
 media/
+!media/dist/
+media/index.html
+media/logo.png
+media/vditor-master/
+media/vditor-master.zip
+
+# Development and build artifacts
+*.tsbuildinfo
+*.tmp
+tmp/
+.DS_Store
+Thumbs.db

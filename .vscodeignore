@@ -1,12 +1,64 @@
+# VSCode
 .vscode
-.github
-media-src
-node_modules
-src
+
+# Dependencies - exclude all node_modules
+node_modules/
+media-src/node_modules/
+
+# Source code directories - exclude all source except bundled output
+src/
+out/
+media-src/
+
+# Large media subdirectories that are not needed in the packaged extension
+media/vditor-master/
+media/vditor-master.zip
+
+# Git related files
+.git/
 .gitignore
-tsconfig.json
-webpack.config.js
-esbuild.js
-Foyfile.ts
+
+# GitHub related
+.github/
+
+# Build artifacts that are not needed
+dist-webview/
+
+# Temporary and log files
+*.tsbuildinfo
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Package managers
+package-lock.json
 yarn.lock
 yarn-error.log
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Test directories
+test/
+tests/
+spec/
+__tests__/
+
+# Documentation (only keep essential files)
+*.md
+!README.md
+!LICENSE
+
+# Build tools/configs that aren't needed at runtime
+webpack.config.js
+tsconfig.json
+Foyfile.ts
+.eslintrc*
+.prettierrc*
+
+# Don't exclude the dist folder which contains our bundled extension
+# dist/ is intentionally not listed here

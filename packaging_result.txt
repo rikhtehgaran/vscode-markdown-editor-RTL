@@ -1,0 +1,2 @@
+ ERROR  Extension entrypoint(s) missing. Make sure these files exist and aren't ignored by '.vscodeignore':
+  extension/dist/extension.js

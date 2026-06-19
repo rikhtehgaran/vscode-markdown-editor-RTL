@@ -3,7 +3,7 @@
   "displayName": "Ag4s RTL Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG editor for RTL Markdown with Persian font support.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "Algo4Stock",
   "private": false,
   "engines": {
@@ -33,7 +33,7 @@
     "type": "git",
     "url": "https://github.com/rikhtehgaran/vscode-markdown-editor-RTL.git"
   },
-  "main": "out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -116,13 +116,10 @@
           "maximum": 300,
           "description": "Scale English/Latin text size relative to the default editor size. 100 keeps the current size; lower values shrink and higher values enlarge."
         },
-        "algo4stock.rtl-markdown-editor.customEmojis": {
-          "type": "array",
-          "default": ["ℹ️", "📝", "📋", "📄", "📁", "🔗", "📎", "💡", "📌", "👀", "❓", "⚠️", "🧩", "📦", "⚡", "🚀", "🛠️", "✅", "❌", "🔥", "✨", "🆕", "➡️", "⬅️", "🔽", "🔼", "🎯", "🏁", "📊", "🗣️", "🔍"],
-          "items": {
-            "type": "string"
-          },
-          "description": "Custom emoji list for the markdown editor. Each item should be an emoji character. Changes require reopening the editor."
+        "algo4stock.rtl-markdown-editor.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save changes to the file when editing in RTL Markdown Editor. When disabled, you will be prompted to save before closing unsaved files."
         }
       }
     },
@@ -136,7 +133,8 @@
     ]
   },
   "scripts": {
-    "watch": "foy watch",
+    "compile": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
     "start": "foy watch",
     "pack": "foy build && vsce package",
     "pub": "foy build && npm version patch && git push origin master --tags && vsce package && vsce publish && npx ovsx create-namespace <name> -p 5f4914bf-d59b-4fb9-ac0a-b0dac1748eee"
@@ -145,9 +143,12 @@
     "@types/node": "^12.12.0",
     "@types/vscode": "^1.47.0",
     "foy": "^0.2.5",
+    "ts-loader": "^9.6.1",
     "ts-node": "9.1.1",
     "typescript": "4.2.2",
     "vsce": "^2.15.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^7.0.3",
     "yarn": "^1.22.22"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
