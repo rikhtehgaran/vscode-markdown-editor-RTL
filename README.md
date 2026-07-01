@@ -130,6 +130,25 @@ The editor includes a comprehensive emoji toolbar with **39 emojis** (8 default 
 
 These emojis are built-in and ready to use immediately. No configuration needed!
 
+## Changelog
+
+### v0.4.0
+- Added customizable code block languages via settings (`codeBlockLanguage1`, `codeBlockLanguage2`, `codeBlockLanguage3`) to dynamically select languages in the toolbar.
+- Added Ag4s custom blocks (`ag4s-block`) and tags (`ag4s-block-b`) in the toolbar to wrap selections with custom HTML/Markdown elements.
+- Preconfigured default custom CSS styling for `ag4s-console` blocks and their spans (blue, green, red, brown, purple, cyan, gray).
+- Added a toolbar manual refresh button to sync and reload content from the active VS Code document.
+- Improved auto-save functionality and overall stability.
+
+### v0.3.0
+- Fixed custom emoji functionality.
+- Improved emoji handling, rendering, and display stability.
+
+### v0.2.0
+- Added customizable emoji list configuration.
+
+### v0.0.5
+- Initial release ready for the marketplace, featuring WYSIWYG editing, Persian/English font configuration, auto-save, copy utilities, etc.
+
 ## Acknowledgement
 
 - [vscode](https://github.com/microsoft/vscode)

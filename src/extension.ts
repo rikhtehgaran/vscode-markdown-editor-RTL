@@ -19,6 +19,15 @@ function getRtlSettings() {
   }
 }
 
+function getAdditionalSettings() {
+  const config = vscode.workspace.getConfiguration(EXTENSION_ID)
+  return {
+    codeBlockLanguage1: config.get<string>('codeBlockLanguage1', ''),
+    codeBlockLanguage2: config.get<string>('codeBlockLanguage2', ''),
+    codeBlockLanguage3: config.get<string>('codeBlockLanguage3', ''),
+  }
+}
+
 function showError(msg: string) {
   vscode.window.showErrorMessage(`[${EXTENSION_ID}] ${msg}`)
 }
@@ -69,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (!e.affectsConfiguration(EXTENSION_ID)) {
         return
       }
-      EditorPanel.activeInstance?.updateRtlSettings()
+      EditorPanel.activeInstance?.updateSettings()
     })
   )
 }
@@ -87,6 +96,7 @@ class EditorPanel {
   public static readonly viewType = EXTENSION_ID
 
   private _disposables: vscode.Disposable[] = []
+  private _isSaving = false
 
   public static async createOrShow(
     context: vscode.ExtensionContext,
@@ -213,12 +223,29 @@ class EditorPanel {
       }
     }, this._disposables)
 
+    // Listen for text document changes to auto-reload
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.uri.toString() === this._uri.toString()) {
+        if (this._isSaving || this._panel.active) {
+          return
+        }
+        this._update({
+          type: 'update',
+        })
+      }
+    }, null, this._disposables)
+
 
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
         debug('msg from webview review', message, this._panel.active)
 
         switch (message.command) {
+          case 'refresh':
+            this._update({
+              type: 'update',
+            })
+            break
           case 'ready':
             this._update({
               type: 'init',
@@ -227,8 +254,12 @@ class EditorPanel {
                   'useVscodeThemeColor'
                 ),
                 ...this._context.globalState.get(KeyVditorOptions),
+                ...getAdditionalSettings(),
               },
-              rtlSettings: getRtlSettings(),
+               themePath: this._panel.webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/dist')).toString(),
+               iconPath: this._panel.webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/ag4s.png')).toString(),
+               iconPathB: this._panel.webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media/ag4sb.png')).toString(),
+               rtlSettings: getRtlSettings(),
               theme:
                 vscode.window.activeColorTheme.kind ===
                   vscode.ColorThemeKind.Dark
@@ -349,6 +380,7 @@ class EditorPanel {
 
   private async _saveContent(content: string) {
     try {
+      this._isSaving = true
       await vscode.workspace.fs.writeFile(this._uri, new TextEncoder().encode(content))
       this._isEdit = false
       this._isDirty = false
@@ -360,6 +392,8 @@ class EditorPanel {
       }
     } catch (error) {
       showError(`Failed to save file: ${error.message}`)
+    } finally {
+      this._isSaving = false
     }
   }
 
@@ -502,6 +536,9 @@ class EditorPanel {
     props: {
       type?: 'init' | 'update'
       options?: any
+      themePath?: string
+      iconPath?: string
+      iconPathB?: string
       rtlSettings?: ReturnType<typeof getRtlSettings>
       theme?: 'dark' | 'light'
     } = { options: void 0 }
@@ -555,10 +592,15 @@ class EditorPanel {
     )
   }
 
-  public updateRtlSettings() {
+  public updateSettings() {
     this._panel.webview.postMessage({
       command: 'rtl-config',
       rtlSettings: getRtlSettings(),
+    })
+    this._panel.webview.postMessage({
+      command: 'update',
+      type: 'config',
+      options: getAdditionalSettings(),
     })
   }
 }

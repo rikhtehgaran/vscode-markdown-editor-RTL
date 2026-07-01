@@ -3,7 +3,7 @@
   "displayName": "Ag4s RTL Markdown Editor",
   "icon": "media/logo.png",
   "description": "A full-featured WYSIWYG editor for RTL Markdown with Persian font support.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "Algo4Stock",
   "private": false,
   "engines": {
@@ -84,7 +84,8 @@
         },
         "algo4stock.rtl-markdown-editor.customCss": {
           "type": "string",
-          "default": "",
+          "default": "pre.ag4s-console span.ag4s-blue { color: blue !important; }\npre.ag4s-console span.ag4s-green { color: green !important; }\npre.ag4s-console span.ag4s-red { color: red !important; }\npre.ag4s-console span.ag4s-brown { color: #957209 !important; }\npre.ag4s-console span.ag4s-purple { color: #9333ea !important; }\npre.ag4s-console span.ag4s-cyan { color: #0ea5a5 !important; }\npre.ag4s-console span.ag4s-gray { color: #818181 !important; }",
+          "editPresentation": "multilineText",
           "description": "Custom CSS rules injected into the markdown editor webview."
         },
         "algo4stock.rtl-markdown-editor.enableRtl": {
@@ -120,6 +121,27 @@
           "type": "boolean",
           "default": true,
           "description": "Automatically save changes to the file when editing in RTL Markdown Editor. When disabled, you will be prompted to save before closing unsaved files."
+        },
+        "algo4stock.rtl-markdown-editor.codeBlockLanguage1": {
+          "type": "string",
+          "default": "",
+          "enum": ["", "bash", "python", "javascript", "typescript", "java", "cpp", "csharp", "php", "ruby", "go", "rust", "sql", "html", "css", "json", "yaml", "xml", "markdown"],
+          "enumDescriptions": ["Default (no language)", "Bash", "Python", "JavaScript", "TypeScript", "Java", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "SQL", "HTML", "CSS", "JSON", "YAML", "XML", "Markdown"],
+          "description": "First language option for the code block dropdown toolbar."
+        },
+        "algo4stock.rtl-markdown-editor.codeBlockLanguage2": {
+          "type": "string",
+          "default": "",
+          "enum": ["", "bash", "python", "javascript", "typescript", "java", "cpp", "csharp", "php", "ruby", "go", "rust", "sql", "html", "css", "json", "yaml", "xml", "markdown"],
+          "enumDescriptions": ["Default (no language)", "Bash", "Python", "JavaScript", "TypeScript", "Java", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "SQL", "HTML", "CSS", "JSON", "YAML", "XML", "Markdown"],
+          "description": "Second language option for the code block dropdown toolbar."
+        },
+        "algo4stock.rtl-markdown-editor.codeBlockLanguage3": {
+          "type": "string",
+          "default": "",
+          "enum": ["", "bash", "python", "javascript", "typescript", "java", "cpp", "csharp", "php", "ruby", "go", "rust", "sql", "html", "css", "json", "yaml", "xml", "markdown"],
+          "enumDescriptions": ["Default (no language)", "Bash", "Python", "JavaScript", "TypeScript", "Java", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "SQL", "HTML", "CSS", "JSON", "YAML", "XML", "Markdown"],
+          "description": "Third language option for the code block dropdown toolbar."
         }
       }
     },

@@ -86,3 +86,46 @@ body[data-use-vscode-theme-color="1"] .vditor {
 .vditor-panel:hover, .vditor-panel_hover {
   opacity: 1;
 }
+
+/* Style for custom ag4s-block dropdown panel */
+.vditor-toolbar__item:has(button[data-type^="ag4s-block"]) .vditor-hint {
+  padding: 4px 0 !important;
+  background-color: var(--vscode-dropdown-background, #252526) !important;
+  border: 1px solid var(--vscode-dropdown-border, #454545) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
+  min-width: 140px !important;
+}
+
+.vditor-toolbar__item:has(button[data-type^="ag4s-block"]) .vditor-hint > div {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.vditor-toolbar__item:has(button[data-type^="ag4s-block"]) .vditor-hint button {
+  width: 100% !important;
+  padding: 6px 12px !important;
+  text-align: left !important;
+  font-family: var(--vscode-editor-font-family, monospace) !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: var(--vscode-dropdown-foreground, #cccccc) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+}
+
+.vditor-toolbar__item:has(button[data-type^="ag4s-block"]) .vditor-hint button:hover {
+  background-color: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.1)) !important;
+  color: var(--vscode-list-hoverForeground, var(--vscode-dropdown-foreground, #ffffff)) !important;
+}
+
+.vditor-icon {
+  padding: 0 !important;
+}

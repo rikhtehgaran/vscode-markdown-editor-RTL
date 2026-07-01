@@ -15,7 +15,7 @@ import Vditor from 'vditor'
 import { format } from 'date-fns'
 import 'vditor/dist/index.css'
 import { t, lang } from './lang'
-import { toolbar } from './toolbar'
+import { getToolbar, updateToolbarOptions } from './toolbar'
 import { fixTableIr } from './fix-table-ir'
 import { createRtlController, RtlSettings } from './rtl'
 import './main.css'
@@ -62,7 +62,7 @@ function initVditor(msg) {
     value: msg.content,
     mode: 'wysiwyg',
     cache: { enable: false },
-    toolbar,
+    toolbar: getToolbar(msg),
     toolbarConfig: { 
       pin: true,
       // Explicitly define emoji configuration in toolbar config
@@ -180,7 +180,7 @@ function initVditor(msg) {
     preview: {
       theme: {
         current: 'theme',
-        path: './theme.css'
+        path: msg.themePath || './theme.css'
       },
       hljs: {
         style: 'xcode',
@@ -253,6 +253,10 @@ window.addEventListener('message', (e) => {
           saveVditorOptions()
         }
         console.log('initVditor')
+      } else if (msg.type === 'config') {
+        if (msg.options) {
+          updateToolbarOptions(msg.options)
+        }
       } else {
         vditor.setValue(msg.content)
         console.log('setValue')
